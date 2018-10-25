@@ -1,0 +1,32 @@
+<view class="cells__title">标题</view>
+<view class="cells cells_after-title">
+  <view class="cell">
+    <view class="cell__bd">
+      <input value="{{ entity.title }}" class="input" focus placeholder="标题" bindinput="onInputTitle" />
+    </view>
+  </view>
+</view>
+<view class="cells__title">正文</view>
+<view class="cells cells_after-title">
+  <view class="cell">
+    <view class="cell__bd">
+      <textarea value="{{ entity.content }}" class="textarea" placeholder="正文" bindinput="onInputContent" />
+    </view>
+  </view>
+</view>
+<view class="cells__title">发布</view>
+<view class="cells cells_after-title">
+  <view class="cell cell_switch">
+    <view class="cell__bd">
+      发布
+    </view>
+    <view class="cell__ft">
+      <switch checked="{{ entity.suatus === 'publish' }}" bindchange="onChangeStatus" />
+    </view>
+  </view>
+</view>
+<view class="btn-area">
+  <button disabled="{{ !entity.title || !entity.content }}" loading="{{ isLoading }}" class="btn" plain="{{ entity.status !== 'publish' }}" type="primary" bindtap="onTapSubmitBotton">
+  {{ entity.status ? '发布' : '保存' }}
+  </button>
+</view>

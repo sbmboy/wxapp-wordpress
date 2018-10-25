@@ -1,3 +1,6 @@
+const app = getApp()
+const { setJWT } = app
+
 const API_BASE = 'https://wxapp.lanthy.com/wp-json'
 const API_ROUTE = 'jwt-auth/v1/token'
 
@@ -8,7 +11,6 @@ Page({
     showMessage:false,
     message:''
   },
-
   onInputUsername(event){
     this.setData({
       username:event.detail.value
@@ -19,29 +21,28 @@ Page({
       password:event.detail.value
     })
   },
-  onTapSubmitBotton(){
-    console.log(this.data.username)
-    console.log(this.data.password)
+  onTapSubmitButton(){
+    console.log(this.data.username, this.data.password)
 
     wx.request({
-      url:`${ API_BASE }/${ API_ROUTE }`,
-      method:'POST',
+      url: `${ API_BASE }/${ API_ROUTE }`,
+      method: 'POST',
       data:{
-        username:this.data.username,
-        password:this.data.password
+        username: this.data.username,
+        password: this.data.password
       },
-      success: (response) => {
+      success:(response)=>{
         console.log(response)
         const { data, statusCode } = response
 
-        if(data.hasOwnProperty('code')){
+        if (data.hasOwnProperty('code')) {
           switch (data.code) {
             case '[jwt_auth] invalid_username':
               this.setData({
                 message:'用户名错误'
               })
               break
-            case '[jwt_auth] incorrect_password':
+              case '[jwt_auth] incorrect_password':
                 this.setData({
                   message:'密码错误'
                 })
@@ -51,25 +52,29 @@ Page({
                 message:'用户名或密码错误'
               })
           }
+        }
 
-          switch (statusCode) {
-            case 403:
+        switch (statusCode) {
+          case 403:
+            this.setData({
+              showMessage:true
+            })
+
+            setTimeout(()=>{
               this.setData({
-                showMessage:true
+                showMessage:false
               })
-
-              setTimeout(()=>{
-                this.setData({
-                  showMessage:false
-                })
-              },3000)
+            },3000)
+            break
+          case 200:
+              setJWT(response.data)
+              wx.switchTab({
+                url:'/pages/users/show'
+              })
               break
-            case 200:
-                console.log(response.data)
-                break
-            default:
-              console.log(response)
-          }
+          default:
+            console.log(response)
+
         }
       }
     })
